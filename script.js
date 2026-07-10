@@ -168,18 +168,29 @@ document.addEventListener('DOMContentLoaded', () => {
     let isDraggingProgress = false;
     let wasPlayingBeforeDrag = false;
 
-    function updateProgress(e) {
-        const { duration, currentTime } = e.srcElement;
+    function updateProgress() {
+        const duration = audio.duration;
+        const currentTime = audio.currentTime;
         if (isNaN(duration)) return;
         
         if (!isDraggingProgress) {
             const progressPercent = (currentTime / duration) * 100;
             progressSlider.value = progressPercent;
+            progressSlider.style.background = `linear-gradient(to right, var(--primary) ${progressPercent}%, rgba(123, 86, 56, 0.15) ${progressPercent}%)`;
         }
 
         currentTimeEl.innerText = formatTime(currentTime);
         durationEl.innerText = formatTime(duration);
     }
+
+    // Smooth animation loop using requestAnimationFrame (60fps) instead of timeupdate
+    function progressLoop() {
+        if (!audio.paused || isDraggingProgress) {
+            updateProgress();
+        }
+        requestAnimationFrame(progressLoop);
+    }
+    requestAnimationFrame(progressLoop);
 
     function setProgress(e) {
         const duration = audio.duration;
@@ -199,12 +210,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${min}:${sec}`;
     }
 
-    // Event Listeners
     playBtn.addEventListener('click', togglePlay);
     prevBtn.addEventListener('click', prevSong);
     nextBtn.addEventListener('click', nextSong);
     
-    audio.addEventListener('timeupdate', updateProgress);
+    // audio.addEventListener('timeupdate', updateProgress); replaced by requestAnimationFrame
     audio.addEventListener('ended', () => {
         if (isRepeat) {
             audio.currentTime = 0;
@@ -227,10 +237,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         setProgress(e);
+        progressSlider.style.background = `linear-gradient(to right, var(--primary) ${e.target.value}%, rgba(123, 86, 56, 0.15) ${e.target.value}%)`;
     });
     progressSlider.addEventListener('change', (e) => {
         if (isDraggingProgress) {
             setProgress(e);
+            progressSlider.style.background = `linear-gradient(to right, var(--primary) ${e.target.value}%, rgba(123, 86, 56, 0.15) ${e.target.value}%)`;
             if (wasPlayingBeforeDrag) {
                 audio.play().catch(e => console.log(e));
             }
@@ -240,6 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     volumeSlider.addEventListener('input', (e) => {
         audio.volume = e.target.value;
+        volumeSlider.style.background = `linear-gradient(to right, var(--primary) ${e.target.value * 100}%, rgba(123, 86, 56, 0.15) ${e.target.value * 100}%)`;
     });
 
     shuffleBtn.addEventListener('click', () => {
