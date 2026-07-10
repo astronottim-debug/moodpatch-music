@@ -187,12 +187,25 @@ body {
     font-weight: 600;
 }
 
+#current-time, #duration {
+    min-width: 45px;
+    font-variant-numeric: tabular-nums;
+}
+
+#current-time {
+    text-align: right;
+}
+
+#duration {
+    text-align: left;
+}
+
 .progress-slider {
     flex: 1;
     -webkit-appearance: none;
     appearance: none;
     height: 6px;
-    background: rgba(123, 86, 56, 0.15);
+    background: linear-gradient(to right, var(--primary) var(--progress, 0%), rgba(123, 86, 56, 0.15) var(--progress, 0%));
     border-radius: 10px;
     outline: none;
     cursor: pointer;
@@ -285,7 +298,7 @@ body {
     flex: 1;
     -webkit-appearance: none;
     height: 4px;
-    background: rgba(123, 86, 56, 0.15);
+    background: linear-gradient(to right, var(--primary) var(--progress, 70%), rgba(123, 86, 56, 0.15) var(--progress, 70%));
     border-radius: 10px;
     outline: none;
 }
