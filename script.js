@@ -60,9 +60,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const songs = [
         {
-            title: 'Gamelan Indah',
+            title: 'Gamelan',
             artist: 'Karyaku',
-            src: 'gamelan-indah.mp3'
+            src: 'https://res.cloudinary.com/uvrpnw8s/video/upload/v1783675090/gamelan-indah_kyh9cw.mp3'
         },
         {
             title: 'Gamelan Ketenangan',
