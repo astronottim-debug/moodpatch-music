@@ -65,6 +65,11 @@ document.addEventListener('DOMContentLoaded', () => {
             src: 'https://res.cloudinary.com/uvrpnw8s/video/upload/v1783675090/gamelan-indah_kyh9cw.mp3'
         },
         {
+            title: 'Gamelan Modern',
+            artist: 'Karyaku',
+            src: 'https://res.cloudinary.com/uvrpnw8s/video/upload/v1783677929/videoplayback_m1mdce.mp4'
+        },
+        {
             title: 'Gamelan Ketenangan',
             artist: 'MoodPatch Originals',
             src: 'https://cdn.pixabay.com/download/audio/2022/10/25/audio_2e2cc2eb10.mp3?filename=gamelan-loop-1-124083.mp3'
