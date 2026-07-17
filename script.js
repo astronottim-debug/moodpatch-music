@@ -1,18 +1,76 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // === 3 Days Timer Logic ===
-    const EXPIRATION_KEY = 'moodpatch_player_expiration';
-    const LIMIT_MS = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
+    // === UI Elements ===
+    const tokenGate = document.getElementById('token-gate');
+    const tokenInput = document.getElementById('token-input');
+    const tokenSubmit = document.getElementById('token-submit');
+    const tokenError = document.getElementById('token-error');
+    
+    // === Timer UI ===
     const countdownEl = document.getElementById('countdown');
     const overlayEl = document.getElementById('expiration-overlay');
     
-    let expirationTime = localStorage.getItem(EXPIRATION_KEY);
+    // === Keys ===
+    const TOKEN_KEY = 'moodpatch_valid_token';
+    const EXPIRATION_KEY = 'moodpatch_token_expiration'; // New key
+    const LIMIT_MS = 3 * 24 * 60 * 60 * 1000;
+    
+    let expirationTime = null;
+    let timerInterval = null;
 
-    if (!expirationTime) {
-        // Set new expiration time if it doesn't exist
-        expirationTime = Date.now() + LIMIT_MS;
-        localStorage.setItem(EXPIRATION_KEY, expirationTime);
-    } else {
-        expirationTime = parseInt(expirationTime, 10);
+    // Cek apakah sudah login sebelumnya
+    if (localStorage.getItem(TOKEN_KEY) && localStorage.getItem(EXPIRATION_KEY)) {
+        tokenGate.classList.add('hidden');
+        startSession();
+    }
+
+    // Fungsi Validasi Token ke Server
+    tokenSubmit.addEventListener('click', async () => {
+        const token = tokenInput.value.trim();
+        if (!token) return;
+
+        tokenSubmit.innerText = "Memeriksa...";
+        tokenSubmit.disabled = true;
+
+        try {
+            // Memanggil Vercel Serverless Function
+            const res = await fetch('/api/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token })
+            });
+
+            const data = await res.json();
+
+            if (data.valid) {
+                // Sukses
+                localStorage.setItem(TOKEN_KEY, token);
+                tokenGate.classList.add('hidden');
+                tokenError.classList.add('hidden');
+                startSession(true); // Mulai sesi baru 3 hari
+            } else {
+                // Gagal
+                tokenError.classList.remove('hidden');
+                tokenError.innerText = data.message || "Token tidak valid.";
+            }
+        } catch (error) {
+            tokenError.classList.remove('hidden');
+            tokenError.innerText = "Gagal terhubung ke server.";
+        }
+
+        tokenSubmit.innerText = "Masuk";
+        tokenSubmit.disabled = false;
+    });
+
+    function startSession(isNew = false) {
+        if (isNew) {
+            expirationTime = Date.now() + LIMIT_MS;
+            localStorage.setItem(EXPIRATION_KEY, expirationTime);
+        } else {
+            expirationTime = parseInt(localStorage.getItem(EXPIRATION_KEY), 10);
+        }
+
+        updateTimer();
+        timerInterval = setInterval(updateTimer, 1000);
     }
 
     function updateTimer() {
@@ -23,10 +81,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Expired
             countdownEl.innerText = "Berakhir";
             overlayEl.classList.remove('hidden');
-            // Stop audio if playing
             if (!audio.paused) {
                 togglePlay();
             }
+            clearInterval(timerInterval);
             return;
         }
 
@@ -39,9 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         countdownEl.innerText = `${days}h ${hours}j ${minutes}m ${seconds}d`;
     }
 
-    // Initial check and interval setup
-    updateTimer();
-    setInterval(updateTimer, 1000);
+
 
 
     // === Player Logic ===

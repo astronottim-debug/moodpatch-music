@@ -11,7 +11,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
 </head>
 <body>
-    <div id="expiration-overlay" class="hidden">
+    <img src="bg.png?v=3" class="bg-img" alt="Background">
+    
+    <!-- Token Gate Overlay -->
+    <div id="token-gate" class="token-overlay">
+        <div class="token-panel glass-panel">
+            <h2 class="token-title">Akses Khusus</h2>
+            <p class="token-desc">Silakan masukkan token rahasiamu untuk menikmati MoodPatch Player.</p>
+            <div class="token-input-group">
+                <input type="text" id="token-input" class="token-input" placeholder="moodpatch-XXXX" autocomplete="off">
+                <button id="token-submit" class="token-submit shadow-btn">Masuk</button>
+            </div>
+            <p id="token-error" class="token-error hidden">Token tidak valid. Silakan coba lagi.</p>
+        </div>
+    </div>
+
+    <!-- Timer / Countdown Overlay -->
+    <div id="expiration-overlay" class="expiration-overlay hidden">
         <div class="expiration-content">
             <h1 class="logo-font">MOODPATCH</h1>
             <p>Waktu Akses Berakhir</p>
