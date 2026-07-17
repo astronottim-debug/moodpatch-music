@@ -9,6 +9,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Manrope:wght@200..800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <style>
+        /* Anti-flash untuk Token Gate */
+        html.logged-in .token-overlay {
+            display: none !important;
+        }
+    </style>
+    <script>
+        // Eksekusi instan sebelum halaman dirender untuk mencegah UI berkedip
+        if (localStorage.getItem('moodpatch_valid_token') && (localStorage.getItem('moodpatch_token_expiration') || localStorage.getItem('moodpatch_token_type') === 'lifetime')) {
+            document.documentElement.classList.add('logged-in');
+        }
+    </script>
 </head>
 <body>
     
@@ -88,6 +100,6 @@
     </main>
 
     <audio id="audio" src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_2e2cc2eb10.mp3?filename=gamelan-loop-1-124083.mp3"></audio>
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=6"></script>
 </body>
 </html>

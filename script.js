@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startSession(isNew = false, type = 'standard') {
         if (type === 'lifetime') {
-            countdownEl.innerText = "Akses Penuh";
+            countdownEl.innerText = "Akses Unlimited";
             countdownEl.style.color = "var(--primary)";
             return; // Berhenti di sini, tidak ada hitung mundur
         }
