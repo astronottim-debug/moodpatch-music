@@ -1,13 +1,9 @@
 export default function handler(req, res) {
-    // Vercel Serverless Function untuk memvalidasi token
-    
-    // Pastikan metode yang masuk adalah POST
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Metode Tidak Diizinkan' });
     }
 
     try {
-        // Ambil data token dari body (bisa berbentuk JSON string atau object tergantung header)
         const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
         const token = body.token;
 
@@ -20,10 +16,24 @@ export default function handler(req, res) {
             'moodpatch-5190'
         ];
 
+        // Daftar token istimewa tanpa batas waktu
+        const lifetimeTokens = [
+            'moodpatch cfo',
+            'moodpatch cto',
+            'moodpatch cmo',
+            'moodpatch ceo',
+            'moodpatch coo',
+            'gendhing bahana berbudaya',
+            'berbudaya'
+        ];
+
         // Pencocokan Token
-        if (validTokens.includes(token)) {
-            // Berhasil
-            return res.status(200).json({ valid: true, message: 'Akses Diberikan!' });
+        if (lifetimeTokens.includes(token)) {
+            // Berhasil (Akses Tanpa Batas)
+            return res.status(200).json({ valid: true, type: 'lifetime', message: 'Akses Istimewa Diberikan!' });
+        } else if (validTokens.includes(token)) {
+            // Berhasil (Akses 3 Hari)
+            return res.status(200).json({ valid: true, type: 'standard', message: 'Akses Diberikan!' });
         } else {
             // Gagal
             return res.status(401).json({ valid: false, message: 'Token tidak valid atau salah.' });
