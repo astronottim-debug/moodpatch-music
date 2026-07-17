@@ -12,15 +12,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // === Keys ===
     const TOKEN_KEY = 'moodpatch_valid_token';
     const EXPIRATION_KEY = 'moodpatch_token_expiration'; // New key
+    const TYPE_KEY = 'moodpatch_token_type'; // New key
     const LIMIT_MS = 3 * 24 * 60 * 60 * 1000;
     
     let expirationTime = null;
     let timerInterval = null;
 
     // Cek apakah sudah login sebelumnya
-    if (localStorage.getItem(TOKEN_KEY) && localStorage.getItem(EXPIRATION_KEY)) {
+    if (localStorage.getItem(TOKEN_KEY) && (localStorage.getItem(EXPIRATION_KEY) || localStorage.getItem(TYPE_KEY) === 'lifetime')) {
         tokenGate.classList.add('hidden');
-        startSession();
+        startSession(false, localStorage.getItem(TYPE_KEY) || 'standard');
     }
 
     // Fungsi Validasi Token ke Server
@@ -44,9 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.valid) {
                 // Sukses
                 localStorage.setItem(TOKEN_KEY, token);
+                localStorage.setItem(TYPE_KEY, data.type || 'standard');
                 tokenGate.classList.add('hidden');
                 tokenError.classList.add('hidden');
-                startSession(true); // Mulai sesi baru 3 hari
+                startSession(true, data.type || 'standard'); // Mulai sesi baru
             } else {
                 // Gagal
                 tokenError.classList.remove('hidden');
@@ -61,7 +63,13 @@ document.addEventListener('DOMContentLoaded', () => {
         tokenSubmit.disabled = false;
     });
 
-    function startSession(isNew = false) {
+    function startSession(isNew = false, type = 'standard') {
+        if (type === 'lifetime') {
+            countdownEl.innerText = "Akses Penuh";
+            countdownEl.style.color = "var(--primary)";
+            return; // Berhenti di sini, tidak ada hitung mundur
+        }
+
         if (isNew) {
             expirationTime = Date.now() + LIMIT_MS;
             localStorage.setItem(EXPIRATION_KEY, expirationTime);
