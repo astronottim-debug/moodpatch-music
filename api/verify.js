@@ -1,4 +1,6 @@
-export default function handler(req, res) {
+import { kv } from '@vercel/kv';
+
+export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Metode Tidak Diizinkan' });
     }
@@ -7,38 +9,38 @@ export default function handler(req, res) {
         const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
         const token = body.token;
 
-        // Daftar token rahasia yang sah (moodpatch-angka unik 4 digit)
-        const validTokens = [
-            'moodpatch-1849',
-            'moodpatch-9274',
-            'moodpatch-3012',
-            'moodpatch-8422',
-            'moodpatch-5190'
-        ];
+        if (!token) return res.status(400).json({ valid: false, message: 'Token kosong.' });
 
-        // Daftar token istimewa tanpa batas waktu
-        const lifetimeTokens = [
-            'moodpatch cfo',
-            'moodpatch cto',
-            'moodpatch cmo',
-            'moodpatch ceo',
-            'moodpatch coo',
-            'gendhing bahana berbudaya',
-            'berbudaya'
-        ];
+        // Cek token di Vercel KV
+        // Format key di KV: "tokens" (sebuah Hash)
+        // HGET tokens "moodpatch-1234" -> { type: 'standard', used: false }
+        const tokenData = await kv.hget('tokens', token);
 
-        // Pencocokan Token
-        if (lifetimeTokens.includes(token)) {
-            // Berhasil (Akses Tanpa Batas)
-            return res.status(200).json({ valid: true, type: 'lifetime', message: 'Akses Istimewa Diberikan!' });
-        } else if (validTokens.includes(token)) {
-            // Berhasil (Akses 3 Hari)
-            return res.status(200).json({ valid: true, type: 'standard', message: 'Akses Diberikan!' });
-        } else {
-            // Gagal
-            return res.status(401).json({ valid: false, message: 'Token tidak valid atau salah.' });
+        if (!tokenData) {
+            return res.status(401).json({ valid: false, message: 'Token tidak ditemukan atau salah.' });
         }
+
+        if (tokenData.used) {
+            return res.status(401).json({ valid: false, message: 'Maaf, token ini sudah pernah dipakai.' });
+        }
+
+        // Jika Lifetime (Multi-use / Tidak pernah kadaluarsa dan tidak di-lock)
+        if (tokenData.type === 'lifetime') {
+            return res.status(200).json({ valid: true, type: 'lifetime', message: 'Akses Istimewa Diberikan!' });
+        }
+
+        // Jika Standard (Single-use / Sekali pakai)
+        if (tokenData.type === 'standard') {
+            // Kunci token agar tidak bisa dipakai orang lain lagi
+            await kv.hset('tokens', {
+                [token]: { type: 'standard', used: true, usedAt: Date.now() }
+            });
+            return res.status(200).json({ valid: true, type: 'standard', message: 'Akses Diberikan!' });
+        }
+
+        return res.status(401).json({ valid: false, message: 'Token rusak.' });
     } catch (error) {
-        return res.status(400).json({ valid: false, message: 'Permintaan ditolak.' });
+        console.error("KV Error:", error);
+        return res.status(500).json({ valid: false, message: 'Terjadi kesalahan pada server database.' });
     }
 }
