@@ -1,0 +1,8 @@
+{
+  "name": "moodpatch-player",
+  "version": "1.0.0",
+  "description": "MoodPatch Music Player",
+  "dependencies": {
+    "@vercel/kv": "^1.0.0"
+  }
+}
