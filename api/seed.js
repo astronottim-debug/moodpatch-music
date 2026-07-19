@@ -887,7 +887,6 @@ export default async function handler(req, res) {
             'moodpatch-0349',
             'moodpatch-5556',
             'moodpatch-3952',
-            'moodpatch-1975',
             'moodpatch-5500',
             'moodpatch-9051',
             'moodpatch-3115',
