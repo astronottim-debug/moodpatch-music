@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cek apakah sudah login sebelumnya
     if (localStorage.getItem(TOKEN_KEY) && (localStorage.getItem(EXPIRATION_KEY) || localStorage.getItem(TYPE_KEY) === 'lifetime')) {
         tokenGate.classList.add('hidden');
-        startSession(false, localStorage.getItem(TYPE_KEY) || 'standard');
+        startSession(localStorage.getItem(TYPE_KEY) || 'standard');
     }
 
     // Fungsi Validasi Token ke Server
@@ -47,9 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Sukses
                 localStorage.setItem(TOKEN_KEY, token);
                 localStorage.setItem(TYPE_KEY, data.type || 'standard');
+                if (data.expiresAt) {
+                    localStorage.setItem(EXPIRATION_KEY, data.expiresAt);
+                }
                 tokenGate.classList.add('hidden');
                 tokenError.classList.add('hidden');
-                startSession(true, data.type || 'standard'); // Mulai sesi baru
+                startSession(data.type || 'standard');
             } else {
                 // Gagal
                 tokenError.classList.remove('hidden');
@@ -64,18 +67,19 @@ document.addEventListener('DOMContentLoaded', () => {
         tokenSubmit.disabled = false;
     });
 
-    function startSession(isNew = false, type = 'standard') {
+    function startSession(type = 'standard') {
         if (type === 'lifetime') {
             countdownEl.innerText = "Akses Unlimited";
             countdownEl.style.color = "var(--primary)";
             return; // Berhenti di sini, tidak ada hitung mundur
         }
 
-        if (isNew) {
+        // Ambil waktu kedaluwarsa dari localStorage (berasal dari Server Vercel KV)
+        expirationTime = parseInt(localStorage.getItem(EXPIRATION_KEY), 10);
+
+        if (!expirationTime || isNaN(expirationTime)) {
+            // Fallback aman jika gagal
             expirationTime = Date.now() + LIMIT_MS;
-            localStorage.setItem(EXPIRATION_KEY, expirationTime);
-        } else {
-            expirationTime = parseInt(localStorage.getItem(EXPIRATION_KEY), 10);
         }
 
         updateTimer();
