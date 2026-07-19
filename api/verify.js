@@ -20,10 +20,6 @@ export default async function handler(req, res) {
             return res.status(401).json({ valid: false, message: 'Token tidak ditemukan atau salah.' });
         }
 
-        if (tokenData.used) {
-            return res.status(401).json({ valid: false, message: 'Maaf, token ini sudah pernah dipakai.' });
-        }
-
         // Jika Lifetime (Multi-use / Tidak pernah kadaluarsa dan tidak di-lock)
         if (tokenData.type === 'lifetime') {
             return res.status(200).json({ valid: true, type: 'lifetime', message: 'Akses Istimewa Diberikan!' });
@@ -31,11 +27,24 @@ export default async function handler(req, res) {
 
         // Jika Standard (Single-use / Sekali pakai)
         if (tokenData.type === 'standard') {
-            // Kunci token agar tidak bisa dipakai orang lain lagi
-            await kv.hset('tokens', {
-                [token]: { type: 'standard', used: true, usedAt: Date.now() }
-            });
-            return res.status(200).json({ valid: true, type: 'standard', message: 'Akses Diberikan!' });
+            const LIMIT_MS = 3 * 24 * 60 * 60 * 1000; // 3 hari
+            
+            if (tokenData.used) {
+                const expiresAt = tokenData.usedAt + LIMIT_MS;
+                if (Date.now() > expiresAt) {
+                    return res.status(401).json({ valid: false, message: 'Sisa waktumu habis.' });
+                } else {
+                    return res.status(200).json({ valid: true, type: 'standard', expiresAt: expiresAt, message: 'Selamat datang kembali!' });
+                }
+            } else {
+                const now = Date.now();
+                const expiresAt = now + LIMIT_MS;
+                // Kunci token agar ditandai sudah mulai berjalan waktunya
+                await kv.hset('tokens', {
+                    [token]: { type: 'standard', used: true, usedAt: now }
+                });
+                return res.status(200).json({ valid: true, type: 'standard', expiresAt: expiresAt, message: 'Akses Diberikan!' });
+            }
         }
 
         return res.status(401).json({ valid: false, message: 'Token rusak.' });
