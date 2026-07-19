@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // === Timer UI ===
     const countdownEl = document.getElementById('countdown');
     const overlayEl = document.getElementById('expiration-overlay');
+    const logoutBtn = document.getElementById('logout-btn');
     
     // === Keys ===
     const TOKEN_KEY = 'moodpatch_valid_token';
@@ -79,6 +80,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateTimer();
         timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    // === Logout Logic ===
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            // Hapus semua data dari localStorage
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(EXPIRATION_KEY);
+            localStorage.removeItem(TYPE_KEY);
+            
+            // Hentikan timer dan musik
+            clearInterval(timerInterval);
+            if (!audio.paused) togglePlay();
+            audio.currentTime = 0;
+            
+            // Tampilkan kembali gerbang token
+            tokenGate.classList.remove('hidden');
+            document.documentElement.classList.remove('logged-in');
+            overlayEl.classList.add('hidden');
+        });
     }
 
     function updateTimer() {

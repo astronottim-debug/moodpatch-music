@@ -62,6 +62,12 @@ body {
     object-fit: contain;
 }
 
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
 .timer {
     display: flex;
     align-items: center;
@@ -80,6 +86,27 @@ body {
 
 .timer-icon {
     font-size: 1.2rem;
+}
+
+.logout-btn {
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(123, 86, 56, 0.3);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--error);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.logout-btn:hover {
+    background: var(--error);
+    color: white;
+    transform: scale(1.05);
 }
 
 .player-container {

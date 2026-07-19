@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MoodPatch Player</title>
-    <link rel="stylesheet" href="style.css?v=6">
+    <link rel="stylesheet" href="style.css?v=7">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Manrope:wght@200..800&display=swap" rel="stylesheet">
@@ -49,9 +49,14 @@
 
     <nav class="navbar">
         <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9HVcMbXUuH1vO6cyu8U7p2SoFq9EDEhF29wERABi7q2JygRp1NulUhYgICEYGUaCfuqEYJLDXkgbq79kgOFZjP68CASfY80xDxrTS_YHm5FwaboW1MTCTjj4K3J_R66vYqN06NxSCGEckM4ugNKtMZ8ul0oWI_tzL9qUrj-RP_asNVPLoChDQEtT32uaNh4OCz1P6wBO1Q-fCfD4iJaQt2MpqkMzdAaBMOnq9KNDyl0fDaFzWVIAAT1u3bRVgvs1hcFxOhbr5Tl1i" alt="MoodPatch" class="logo-img">
-        <div class="timer">
-            <span class="material-symbols-outlined timer-icon">timer</span>
-            <span id="countdown">Memuat...</span>
+        <div class="nav-actions">
+            <div class="timer">
+                <span class="material-symbols-outlined timer-icon">timer</span>
+                <span id="countdown">Memuat...</span>
+            </div>
+            <button id="logout-btn" class="logout-btn" title="Keluar">
+                <span class="material-symbols-outlined">logout</span>
+            </button>
         </div>
     </nav>
 
@@ -100,6 +105,6 @@
     </main>
 
     <audio id="audio" src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_2e2cc2eb10.mp3?filename=gamelan-loop-1-124083.mp3"></audio>
-    <script src="script.js?v=6"></script>
+    <script src="script.js?v=7"></script>
 </body>
 </html>
