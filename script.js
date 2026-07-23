@@ -35,16 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerInterval = null;
 
 
-    // Fungsi Tekan Enter untuk Masuk
-    tokenInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            tokenSubmit.click();
-        }
-    });
-
-    // Fungsi Validasi Token ke Server
-    tokenSubmit.addEventListener('click', async () => {
+    async function submitToken() {
         const token = tokenInput.value.trim();
         if (!token) return;
 
@@ -83,7 +74,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tokenSubmit.innerText = "Masuk";
         tokenSubmit.disabled = false;
+    }
+
+    // Fungsi Tekan Enter untuk Masuk
+    tokenInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            submitToken();
+        }
     });
+
+    // Fungsi Klik Tombol Masuk
+    tokenSubmit.addEventListener('click', submitToken);
 
     function startSession(type = 'standard') {
         if (type === 'lifetime') {
