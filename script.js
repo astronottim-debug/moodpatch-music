@@ -10,6 +10,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const overlayEl = document.getElementById('expiration-overlay');
     const logoutBtn = document.getElementById('logout-btn');
     const reloginBtn = document.getElementById('relogin-btn');
+
+    // === Player Elements ===
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('play');
+    const playIcon = document.getElementById('play-icon');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const progressSlider = document.getElementById('progress-container');
+    const currentTimeEl = document.getElementById('current-time');
+    const durationEl = document.getElementById('duration');
+    const albumArt = document.getElementById('album-art');
+    const volumeSlider = document.getElementById('volume');
+    const shuffleBtn = document.getElementById('shuffle');
+    const repeatBtn = document.getElementById('repeat');
     
     // === Keys ===
     const TOKEN_KEY = 'moodpatch_valid_token';
@@ -156,18 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // === Player Logic ===
-    const audio = document.getElementById('audio');
-    const playBtn = document.getElementById('play');
-    const playIcon = document.getElementById('play-icon');
-    const prevBtn = document.getElementById('prev');
-    const nextBtn = document.getElementById('next');
-    const progressSlider = document.getElementById('progress-container');
-    const currentTimeEl = document.getElementById('current-time');
-    const durationEl = document.getElementById('duration');
-    const albumArt = document.getElementById('album-art');
-    const volumeSlider = document.getElementById('volume');
-    const shuffleBtn = document.getElementById('shuffle');
-    const repeatBtn = document.getElementById('repeat');
 
     const songs = [
         {
