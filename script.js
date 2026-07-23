@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const countdownEl = document.getElementById('countdown');
     const overlayEl = document.getElementById('expiration-overlay');
     const logoutBtn = document.getElementById('logout-btn');
+    const reloginBtn = document.getElementById('relogin-btn');
     
     // === Keys ===
     const TOKEN_KEY = 'moodpatch_valid_token';
@@ -103,6 +104,27 @@ document.addEventListener('DOMContentLoaded', () => {
             tokenGate.classList.remove('hidden');
             document.documentElement.classList.remove('logged-in');
             overlayEl.classList.add('hidden');
+        });
+    }
+
+    // === Relogin Logic (dari layar waktu habis) ===
+    if (reloginBtn) {
+        reloginBtn.addEventListener('click', () => {
+            // Hapus semua data dari localStorage
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(EXPIRATION_KEY);
+            localStorage.removeItem(TYPE_KEY);
+
+            // Sembunyikan overlay kedaluwarsa
+            overlayEl.classList.add('hidden');
+
+            // Tampilkan kembali gerbang token
+            tokenGate.classList.remove('hidden');
+            document.documentElement.classList.remove('logged-in');
+
+            // Reset input field
+            tokenInput.value = '';
+            tokenError.classList.add('hidden');
         });
     }
 
