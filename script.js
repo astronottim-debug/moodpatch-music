@@ -34,11 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let expirationTime = null;
     let timerInterval = null;
 
-    // Cek apakah sudah login sebelumnya
-    if (localStorage.getItem(TOKEN_KEY) && (localStorage.getItem(EXPIRATION_KEY) || localStorage.getItem(TYPE_KEY) === 'lifetime')) {
-        tokenGate.classList.add('hidden');
-        startSession(localStorage.getItem(TYPE_KEY) || 'standard');
-    }
 
     // Fungsi Validasi Token ke Server
     tokenSubmit.addEventListener('click', async () => {
@@ -142,6 +137,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // === Cek apakah sudah login sebelumnya (HARUS setelah semua listener terpasang) ===
+    if (localStorage.getItem(TOKEN_KEY) && (localStorage.getItem(EXPIRATION_KEY) || localStorage.getItem(TYPE_KEY) === 'lifetime')) {
+        tokenGate.classList.add('hidden');
+        startSession(localStorage.getItem(TYPE_KEY) || 'standard');
+    }
+
     function updateTimer() {
         const now = Date.now();
         const diff = expirationTime - now;
@@ -150,9 +151,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Expired
             countdownEl.innerText = "Berakhir";
             overlayEl.classList.remove('hidden');
-            if (!audio.paused) {
-                togglePlay();
-            }
+            try {
+                if (audio && !audio.paused) {
+                    togglePlay();
+                }
+            } catch(e) { /* safety */ }
             clearInterval(timerInterval);
             return;
         }
