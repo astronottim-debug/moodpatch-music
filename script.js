@@ -35,6 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerInterval = null;
 
 
+    // Fungsi Tekan Enter untuk Masuk
+    tokenInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            tokenSubmit.click();
+        }
+    });
+
     // Fungsi Validasi Token ke Server
     tokenSubmit.addEventListener('click', async () => {
         const token = tokenInput.value.trim();
